@@ -75,10 +75,10 @@ if __name__ == "__main__":
     blocks = shuffleBlocks(blocks)
 
     #create players
-    playerEast = Player("East", 1, [], 0, 0)
-    playerSouth = Player("South", 2, [], 0, 0)
-    playerWest = Player("West", 3, [], 0, 0)
-    playerNorth = Player("North", 4, [], 0, 0)
+    playerEast = Player("East", 0, [], 0, 0)
+    playerSouth = Player("South", 1, [], 0, 0)
+    playerWest = Player("West", 2, [], 0, 0)
+    playerNorth = Player("North", 3, [], 0, 0)
 
     players = [playerEast, playerSouth, playerWest, playerNorth]
 
@@ -96,7 +96,26 @@ if __name__ == "__main__":
         
     #first roll
     playerNum = firstRollPlayer.num
-    roll = np.random.randint(1, 7)
+    roll1 = np.random.randint(1, 7)
+    roll2 = np.random.randint(1, 7)
+    total1 = roll1 + roll2
+    
+    #determine who rolls next
+    playerNum = (playerNum + ((total % 4) - 1)) % 4 #write test cases later
+    roll1 = np.random.randint(1, 7)
+    roll2 = np.random.randint(1, 7)
+    total2 = roll1 + roll2
+
+    drawStartStack = (36 * (playerNum + 1)) / 3
+    drawStartStack = drawStartStack - total2
+
+
+
+
+
+
+
+
     
 
 
