@@ -1,78 +1,63 @@
 import numpy as np
-
-class Block:
-    def __init__(self, suit, value):
-        self.suit = suit
-        self.value = value
+import block
+from block import Block
 
 class Player:
-    def __init__(self, name, num, pieces, points, win):
+    def __init__(self, name, num, blocks, points, win):
         self.name = name
         self.num = num
-        self.pieces = pieces
+        self.blocks = blocks
         self.points = points
         self.win = win
 
-def createBlockList():
-    blocks = []
-    for _ in range(4):
-        for i in range(1, 10):
-            numberBlock = Block("Number", i)
-            blocks.append(numberBlock)
+def dealBlocks(startStack, players, blocks):
+    #first round
+    playerNum = 0
+    for currStack in range(startStack, startStack-8, -2):
+        stack1 = blocks[(currStack-1)*3:(currStack)*3]
+        stack2 = blocks[(currStack-2)*3:(currStack-1)*3]
 
-    for _ in range(4):
-        for i in range(1, 10):
-            wheelBlock = Block("Wheel", i)
-            blocks.append(wheelBlock)
-    
-    for _ in range(4):
-        for i in range(1, 10):
-            stickBlock = Block("Stick", i)
-            blocks.append(stickBlock)
-    
-    winds = ["East", "South", "West", "North"]
+        playerStacks = [stack1, stack2]
 
-    for wind in winds:
-        for i in range(4):
-            windBlock = Block("Wind", wind)
-            blocks.append(windBlock)
-    
-    dragons = ["red", "green", "white"]
+        players[playerNum].blocks.append([block for stack in playerStacks for block in stack])
 
-    for dragon in dragons:
-        for i in range(4):
-            dragonBlock = Block("Dragon", dragon)
-            blocks.append(dragonBlock)
-    
-    for i in range(4):
-        flowerBlock = Block("Flower", i)
-        blocks.append(flowerBlock)
-    
-    for i in range(4):
-        seasonBlock = Block("Season", i)
-        blocks.append(seasonBlock)
-    
-    return blocks
+        playerNum += 1
 
-def shuffleBlocks(blocks):
-    indices = np.arange(len(blocks))
-    np.random.shuffle(indices)
-    shuffledBlocks = np.array(blocks)[indices]
-    return shuffledBlocks
+    #secondRound
+    playerNum = 0
+    for currStack in range(startStack-8, startStack-16, -2):
+        stack1 = blocks[(currStack-1)*3:(currStack)*3]
+        stack2 = blocks[(currStack-2)*3:(currStack-1)*3]
 
-def printBlocks(blocks):
-    for block in blocks:
-        print("( " + block.suit + " , " + str(block.value) + " )")
+        playerStacks = [stack1, stack2]
+
+        players[playerNum].blocks.append([block for stack in playerStacks for block in stack])
+
+        playerNum += 1
+
+    currStack = startStack - 16
+    #last round
+    players[0].blocks.append([blocks[(currStack-1)*3], blocks[(currStack-2)*3]])
+    players[1].blocks.append([blocks[(currStack-1)*3+1]])
+    players[2].blocks.append([blocks[(currStack-1)*3+2]])
+    players[3].blocks.append([blocks[(currStack-2)*3+1]])
+
+    #flatten each players list of pieces
+    for player in players:
+        player.blocks = [block for blocklist in player.blocks for block in blocklist]
+    
+    startDraw = (currStack-2)*3+2
+    
+    return players, startDraw
 
 
-    
 if __name__ == "__main__":
 
     #Initializes list of all blocks in mahjong. Length of the list must be 144 pieces.
-    blocks = createBlockList()
+    blocks = block.createBlockList()
 
     #randomize the order of the blocks
-    blocks = shuffleBlocks(blocks)
+    blocks = block.shuffleBlocks(blocks)
 
     #create players
     playerEast = Player("East", 0, [], 0, 0)
@@ -106,24 +91,15 @@ if __name__ == "__main__":
     roll2 = np.random.randint(1, 7)
     total2 = roll1 + roll2
 
-    drawStartStack = (36 * (playerNum + 1)) / 3
-    drawStartStack = drawStartStack - total2
+    drawStartStack = 12 * (playerNum + 1)
+    drawStartStack = drawStartStack - total2 + 1
 
+    print(drawStartStack)
 
+    players, startDraw = dealBlocks(drawStartStack, players, blocks)
 
+    #test cases laters
+    block.printBlocks(players[0].blocks)
+    print(len(players[3].blocks))
+    print(startDraw)
 
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
-    
