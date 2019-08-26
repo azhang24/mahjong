@@ -10,7 +10,39 @@ class Player:
         self.points = points
         self.win = win
 
+def firstRoll(players):
+    #determine who gets first roll
+    firstRollPlayer = None
+    maxTotal = 0
+
+    for player in players:
+        roll1 = np.random.randint(1, 7)
+        roll2 = np.random.randint(1, 7)
+        total = roll1 + roll2
+        if(total > maxTotal):
+            maxTotal = total
+            firstRollPlayer = player
+        
+    #first roll
+    playerNum = firstRollPlayer.num
+    roll1 = np.random.randint(1, 7)
+    roll2 = np.random.randint(1, 7)
+    total1 = roll1 + roll2
+
+    return playerNum, total1
+
+def secondRoll(playerNum, total1, players):
+    #determine who rolls next
+    playerNum = (playerNum + ((total1 % 4) - 1)) % 4 #write test cases later
+    roll1 = np.random.randint(1, 7)
+    roll2 = np.random.randint(1, 7)
+    total2 = roll1 + roll2
+
+    return playerNum, total2
+    
+
 def dealBlocks(startStack, players, blocks):
+
     #first round
     playerNum = 0
     for currStack in range(startStack, startStack-8, -2):
@@ -67,34 +99,12 @@ if __name__ == "__main__":
 
     players = [playerEast, playerSouth, playerWest, playerNorth]
 
-    #determine who gets first roll
-    firstRollPlayer = None
-    maxTotal = 0
+    playerNum, total1 = firstRoll(players)
 
-    for player in players:
-        roll1 = np.random.randint(1, 7)
-        roll2 = np.random.randint(1, 7)
-        total = roll1 + roll2
-        if(total > maxTotal):
-            maxTotal = total
-            firstRollPlayer = player
-        
-    #first roll
-    playerNum = firstRollPlayer.num
-    roll1 = np.random.randint(1, 7)
-    roll2 = np.random.randint(1, 7)
-    total1 = roll1 + roll2
-    
-    #determine who rolls next
-    playerNum = (playerNum + ((total % 4) - 1)) % 4 #write test cases later
-    roll1 = np.random.randint(1, 7)
-    roll2 = np.random.randint(1, 7)
-    total2 = roll1 + roll2
+    playerNum, total2 = secondRoll(playerNum, total1, players)
 
     drawStartStack = 12 * (playerNum + 1)
     drawStartStack = drawStartStack - total2 + 1
-
-    print(drawStartStack)
 
     players, startDraw = dealBlocks(drawStartStack, players, blocks)
 
