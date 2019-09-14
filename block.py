@@ -53,8 +53,10 @@ def shuffleBlocks(blocks):
     return shuffledBlocks
 
 def printBlocks(blocks):
+    i = 0
     for block in blocks:
-        print("( " + block.suit + " , " + str(block.value) + " )")
+        print(str(i) + ": "+ "( " + block.suit + " , " + str(block.value) + " )")
+        i += 1
 
 
     

@@ -41,10 +41,10 @@ def secondRoll(playerNum, total1, players):
     return playerNum, total2
     
 
-def dealBlocks(startStack, players, blocks):
+def dealBlocks(startStack, startPlayer, players, blocks):
 
     #first round
-    playerNum = 0
+    playerNum = startPlayer
     for currStack in range(startStack, startStack-8, -2):
         stack1 = blocks[(currStack-1)*3:(currStack)*3]
         stack2 = blocks[(currStack-2)*3:(currStack-1)*3]
@@ -55,8 +55,12 @@ def dealBlocks(startStack, players, blocks):
 
         playerNum += 1
 
+        if(playerNum >= 4):
+            playerNum %= 4
+    
+
     #secondRound
-    playerNum = 0
+    playerNum = startPlayer
     for currStack in range(startStack-8, startStack-16, -2):
         stack1 = blocks[(currStack-1)*3:(currStack)*3]
         stack2 = blocks[(currStack-2)*3:(currStack-1)*3]
@@ -67,12 +71,15 @@ def dealBlocks(startStack, players, blocks):
 
         playerNum += 1
 
+        if(playerNum >= 4):
+            playerNum %= 4
+
     currStack = startStack - 16
     #last round
-    players[0].blocks.append([blocks[(currStack-1)*3], blocks[(currStack-2)*3]])
-    players[1].blocks.append([blocks[(currStack-1)*3+1]])
-    players[2].blocks.append([blocks[(currStack-1)*3+2]])
-    players[3].blocks.append([blocks[(currStack-2)*3+1]])
+    players[startPlayer].blocks.append([blocks[(currStack-1)*3], blocks[(currStack-2)*3]])
+    players[(startPlayer + 1) % 4].blocks.append([blocks[(currStack-1)*3+1]])
+    players[(startPlayer + 2) % 4].blocks.append([blocks[(currStack-1)*3+2]])
+    players[(startPlayer + 3) % 4].blocks.append([blocks[(currStack-2)*3+1]])
 
     #flatten each players list of pieces
     for player in players:
@@ -99,17 +106,33 @@ if __name__ == "__main__":
 
     players = [playerEast, playerSouth, playerWest, playerNorth]
 
-    playerNum, total1 = firstRoll(players)
+    playerNum1, total1 = firstRoll(players)
 
-    playerNum, total2 = secondRoll(playerNum, total1, players)
+    playerNum2, total2 = secondRoll(playerNum1, total1, players)
 
-    drawStartStack = 12 * (playerNum + 1)
-    drawStartStack = drawStartStack - total2 + 1
+    drawStartStack = 12 * (playerNum2 + 1)
+    drawStartStack = drawStartStack - total1 - total2 + 1
 
-    players, startDraw = dealBlocks(drawStartStack, players, blocks)
+
+
+    players, startDraw = dealBlocks(drawStartStack, playerNum1, players, blocks)
 
     #test cases laters
-    block.printBlocks(players[0].blocks)
-    print(len(players[3].blocks))
-    print(startDraw)
+    print(playerNum1)
+    print(total1)
+    print(playerNum2)
+    print(total2)
+    print(drawStartStack)
 
+    block.printBlocks(blocks)
+    print("Player 0: ")
+    block.printBlocks(players[0].blocks)
+
+    print("Player 1: ")
+    block.printBlocks(players[1].blocks)
+    
+    print("Player 2: ")
+    block.printBlocks(players[2].blocks)
+
+    print("Player 3: ")
+    block.printBlocks(players[3].blocks)
